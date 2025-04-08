@@ -1,10 +1,33 @@
-import { ErrorComponent, createFileRoute } from "@tanstack/react-router";
+import {
+  ErrorComponent,
+  createFileRoute,
+  notFound,
+} from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
+import { Chat } from "~/components/Chat";
 import { NotFound } from "~/components/NotFound.js";
-import { fetchChat } from "~/functions/chats.js";
+import { fetchChat, fetchMessages } from "~/functions/chats.js";
+import { convertToUIMessages } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authed/chats/$chatId")({
-  loader: ({ params: { chatId } }) => fetchChat({ data: { id: chatId } }),
+  loader: async ({ params: { chatId } }) => {
+    const chat = await fetchChat({ data: { id: chatId } });
+
+    if (!chat) {
+      throw notFound();
+    }
+
+    const messages = await fetchMessages({ data: { id: chat.id } });
+
+    if (!messages) {
+      throw notFound();
+    }
+
+    return {
+      chat,
+      messages,
+    };
+  },
   errorComponent: PostErrorComponent,
   component: PostComponent,
   notFoundComponent: () => {
@@ -12,17 +35,20 @@ export const Route = createFileRoute("/_authed/chats/$chatId")({
   },
 });
 
-export function PostErrorComponent({ error }: ErrorComponentProps) {
+function PostErrorComponent({ error }: ErrorComponentProps) {
   return <ErrorComponent error={error} />;
 }
 
 function PostComponent() {
-  const chat = Route.useLoaderData();
+  const { chat, messages } = Route.useLoaderData();
 
   return (
-    <div className="space-y-2">
-      <h4 className="text-xl font-bold underline">{chat.title}</h4>
-      <div className="text-sm">{chat.title}</div>
-    </div>
+    <>
+      <Chat
+        id={chat.id}
+        initialMessages={convertToUIMessages(messages)}
+        isReadonly={false}
+      />
+    </>
   );
 }
