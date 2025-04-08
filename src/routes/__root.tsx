@@ -15,6 +15,8 @@ import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo.js";
 import { useAppSession } from "~/utils/session.js";
 import { PrivyProvider } from "@privy-io/react-auth";
+import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
+import UserLoginButton from "~/components/UserLoginButton";
 
 const fetchUser = createServerFn({ method: "GET" }).handler(async () => {
   // We need to auth on the server so we have access to secure cookies
@@ -24,9 +26,7 @@ const fetchUser = createServerFn({ method: "GET" }).handler(async () => {
     return null;
   }
 
-  return {
-    email: session.data.email,
-  };
+  return session.data;
 });
 
 export const Route = createRootRoute({
@@ -110,6 +110,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           config={{
             // Display email and wallet as login methods
             loginMethods: ["email", "wallet"],
+            externalWallets: {
+              solana: { connectors: toSolanaWalletConnectors() },
+            },
             appearance: {
               theme: "dark",
               accentColor: "#676FFF",
@@ -142,14 +145,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               Chats
             </Link>
             <div className="ml-auto">
-              {user ? (
-                <>
-                  <span className="mr-2">{user.email}</span>
-                  <Link to="/logout">Logout</Link>
-                </>
-              ) : (
-                <Link to="/login">Login</Link>
-              )}
+              <UserLoginButton user={user} />
             </div>
           </div>
           <hr />

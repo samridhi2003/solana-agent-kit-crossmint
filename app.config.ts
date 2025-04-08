@@ -27,9 +27,9 @@ export default defineConfig({
     // You might still need optimizeDeps for the browser build
     optimizeDeps: {
       esbuildOptions: {
-        define: {
-          global: "globalThis",
-        },
+        // define: {
+        //   global: "globalThis",
+        // },
         loader: {
           ".json": "json",
         },

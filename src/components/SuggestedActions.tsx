@@ -53,7 +53,7 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
             onClick={(e) => {
               e.preventDefault();
               nav({
-                href: `/chat/${chatId}?input=${suggestedAction.action}`,
+                href: `/chats/${chatId}?input=${suggestedAction.action}`,
                 replace: true,
               });
             }}

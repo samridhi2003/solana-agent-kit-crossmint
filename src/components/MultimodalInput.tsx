@@ -107,7 +107,7 @@ function PureMultimodalInput({
   const submitForm = useCallback(async () => {
     if (window.location.pathname === "/chats") {
       nav({
-        href: `/chat/${chatId}?input=${input}`,
+        href: `/chats/${chatId}?input=${input}`,
         replace: true,
       });
     }

@@ -25,14 +25,12 @@ function PostsComponent() {
   const chats = Route.useLoaderData();
 
   return (
-    <SidebarProvider>
-      {/* <ul className="list-disc pl-4"> */}
+    <SidebarProvider defaultOpen={false} className="min-h-0">
       <Sidebar>
         <SidebarContent>
           <SidebarMenu>
             {chats.chats.map((chat) => {
               return (
-                // <li key={chat.id} className="whitespace-nowrap">
                 <SidebarMenuItem
                   key={chat.id}
                   className="flex justify-between m-1 p-2 hover:bg-muted rounded-md cursor-pointer"
@@ -78,14 +76,11 @@ function PostsComponent() {
                     <Trash />
                   </Button>
                 </SidebarMenuItem>
-                // </li>
               );
             })}
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
-      {/* </ul> */}
-      <hr />
       <SidebarTrigger />
       <SidebarInset>
         <Outlet />

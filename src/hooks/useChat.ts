@@ -321,7 +321,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
   );
 
   const deleteChat = useCallback(async () => {
-    const { data: session } = await useAppSession();
+    const session = await fetchSession();
     if (!session.id) {
       setError("You must be logged in to delete chats");
       return;
@@ -330,7 +330,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
     try {
       const chat = await fetchChat({ data: { id } });
 
-      if (chat.userId !== session.id) {
+      if (chat?.userId !== session.id) {
         throw new Error("Unauthorized");
       }
 

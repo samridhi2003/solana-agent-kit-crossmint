@@ -24,10 +24,7 @@ export const fetchChat = createServerFn({ method: "GET" })
     const chat = await getChatById({ id: data.id });
     const userId = (await useAppSession()).data.id;
 
-    if (!chat) {
-      console.info(`Chat with id ${data.id} not found`);
-      throw notFound();
-    }
+    if (!chat) return undefined;
 
     if (chat.userId !== userId) {
       console.info(`Unauthorized access to chat with id ${data.id}`);
