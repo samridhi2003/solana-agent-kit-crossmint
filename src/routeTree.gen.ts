@@ -16,9 +16,9 @@ import { Route as LogoutImport } from './routes/logout'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthedPostsRouteImport } from './routes/_authed/posts.route'
-import { Route as AuthedPostsIndexImport } from './routes/_authed/posts.index'
-import { Route as AuthedPostsPostIdImport } from './routes/_authed/posts.$postId'
+import { Route as AuthedChatsRouteImport } from './routes/_authed/chats.route'
+import { Route as AuthedChatsIndexImport } from './routes/_authed/chats.index'
+import { Route as AuthedChatsChatIdImport } from './routes/_authed/chats.$chatId'
 
 // Create/Update Routes
 
@@ -51,22 +51,22 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthedPostsRouteRoute = AuthedPostsRouteImport.update({
-  id: '/posts',
-  path: '/posts',
+const AuthedChatsRouteRoute = AuthedChatsRouteImport.update({
+  id: '/chats',
+  path: '/chats',
   getParentRoute: () => AuthedRoute,
 } as any)
 
-const AuthedPostsIndexRoute = AuthedPostsIndexImport.update({
+const AuthedChatsIndexRoute = AuthedChatsIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthedPostsRouteRoute,
+  getParentRoute: () => AuthedChatsRouteRoute,
 } as any)
 
-const AuthedPostsPostIdRoute = AuthedPostsPostIdImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => AuthedPostsRouteRoute,
+const AuthedChatsChatIdRoute = AuthedChatsChatIdImport.update({
+  id: '/$chatId',
+  path: '/$chatId',
+  getParentRoute: () => AuthedChatsRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -108,51 +108,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/_authed/posts': {
-      id: '/_authed/posts'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof AuthedPostsRouteImport
+    '/_authed/chats': {
+      id: '/_authed/chats'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof AuthedChatsRouteImport
       parentRoute: typeof AuthedImport
     }
-    '/_authed/posts/$postId': {
-      id: '/_authed/posts/$postId'
-      path: '/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof AuthedPostsPostIdImport
-      parentRoute: typeof AuthedPostsRouteImport
+    '/_authed/chats/$chatId': {
+      id: '/_authed/chats/$chatId'
+      path: '/$chatId'
+      fullPath: '/chats/$chatId'
+      preLoaderRoute: typeof AuthedChatsChatIdImport
+      parentRoute: typeof AuthedChatsRouteImport
     }
-    '/_authed/posts/': {
-      id: '/_authed/posts/'
+    '/_authed/chats/': {
+      id: '/_authed/chats/'
       path: '/'
-      fullPath: '/posts/'
-      preLoaderRoute: typeof AuthedPostsIndexImport
-      parentRoute: typeof AuthedPostsRouteImport
+      fullPath: '/chats/'
+      preLoaderRoute: typeof AuthedChatsIndexImport
+      parentRoute: typeof AuthedChatsRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthedPostsRouteRouteChildren {
-  AuthedPostsPostIdRoute: typeof AuthedPostsPostIdRoute
-  AuthedPostsIndexRoute: typeof AuthedPostsIndexRoute
+interface AuthedChatsRouteRouteChildren {
+  AuthedChatsChatIdRoute: typeof AuthedChatsChatIdRoute
+  AuthedChatsIndexRoute: typeof AuthedChatsIndexRoute
 }
 
-const AuthedPostsRouteRouteChildren: AuthedPostsRouteRouteChildren = {
-  AuthedPostsPostIdRoute: AuthedPostsPostIdRoute,
-  AuthedPostsIndexRoute: AuthedPostsIndexRoute,
+const AuthedChatsRouteRouteChildren: AuthedChatsRouteRouteChildren = {
+  AuthedChatsChatIdRoute: AuthedChatsChatIdRoute,
+  AuthedChatsIndexRoute: AuthedChatsIndexRoute,
 }
 
-const AuthedPostsRouteRouteWithChildren =
-  AuthedPostsRouteRoute._addFileChildren(AuthedPostsRouteRouteChildren)
+const AuthedChatsRouteRouteWithChildren =
+  AuthedChatsRouteRoute._addFileChildren(AuthedChatsRouteRouteChildren)
 
 interface AuthedRouteChildren {
-  AuthedPostsRouteRoute: typeof AuthedPostsRouteRouteWithChildren
+  AuthedChatsRouteRoute: typeof AuthedChatsRouteRouteWithChildren
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedPostsRouteRoute: AuthedPostsRouteRouteWithChildren,
+  AuthedChatsRouteRoute: AuthedChatsRouteRouteWithChildren,
 }
 
 const AuthedRouteWithChildren =
@@ -164,9 +164,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
-  '/posts': typeof AuthedPostsRouteRouteWithChildren
-  '/posts/$postId': typeof AuthedPostsPostIdRoute
-  '/posts/': typeof AuthedPostsIndexRoute
+  '/chats': typeof AuthedChatsRouteRouteWithChildren
+  '/chats/$chatId': typeof AuthedChatsChatIdRoute
+  '/chats/': typeof AuthedChatsIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -175,8 +175,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
-  '/posts/$postId': typeof AuthedPostsPostIdRoute
-  '/posts': typeof AuthedPostsIndexRoute
+  '/chats/$chatId': typeof AuthedChatsChatIdRoute
+  '/chats': typeof AuthedChatsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -186,9 +186,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/signup': typeof SignupRoute
-  '/_authed/posts': typeof AuthedPostsRouteRouteWithChildren
-  '/_authed/posts/$postId': typeof AuthedPostsPostIdRoute
-  '/_authed/posts/': typeof AuthedPostsIndexRoute
+  '/_authed/chats': typeof AuthedChatsRouteRouteWithChildren
+  '/_authed/chats/$chatId': typeof AuthedChatsChatIdRoute
+  '/_authed/chats/': typeof AuthedChatsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -199,11 +199,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/signup'
-    | '/posts'
-    | '/posts/$postId'
-    | '/posts/'
+    | '/chats'
+    | '/chats/$chatId'
+    | '/chats/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/logout' | '/signup' | '/posts/$postId' | '/posts'
+  to: '/' | '' | '/login' | '/logout' | '/signup' | '/chats/$chatId' | '/chats'
   id:
     | '__root__'
     | '/'
@@ -211,9 +211,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/signup'
-    | '/_authed/posts'
-    | '/_authed/posts/$postId'
-    | '/_authed/posts/'
+    | '/_authed/chats'
+    | '/_authed/chats/$chatId'
+    | '/_authed/chats/'
   fileRoutesById: FileRoutesById
 }
 
@@ -256,7 +256,7 @@ export const routeTree = rootRoute
     "/_authed": {
       "filePath": "_authed.tsx",
       "children": [
-        "/_authed/posts"
+        "/_authed/chats"
       ]
     },
     "/login": {
@@ -268,21 +268,21 @@ export const routeTree = rootRoute
     "/signup": {
       "filePath": "signup.tsx"
     },
-    "/_authed/posts": {
-      "filePath": "_authed/posts.route.tsx",
+    "/_authed/chats": {
+      "filePath": "_authed/chats.route.tsx",
       "parent": "/_authed",
       "children": [
-        "/_authed/posts/$postId",
-        "/_authed/posts/"
+        "/_authed/chats/$chatId",
+        "/_authed/chats/"
       ]
     },
-    "/_authed/posts/$postId": {
-      "filePath": "_authed/posts.$postId.tsx",
-      "parent": "/_authed/posts"
+    "/_authed/chats/$chatId": {
+      "filePath": "_authed/chats.$chatId.tsx",
+      "parent": "/_authed/chats"
     },
-    "/_authed/posts/": {
-      "filePath": "_authed/posts.index.tsx",
-      "parent": "/_authed/posts"
+    "/_authed/chats/": {
+      "filePath": "_authed/chats.index.tsx",
+      "parent": "/_authed/chats"
     }
   }
 }

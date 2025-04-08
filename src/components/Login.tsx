@@ -1,41 +1,41 @@
-import { useRouter } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
-import { useMutation } from '../hooks/useMutation'
-import { loginFn } from '../routes/_authed'
-import { Auth } from './Auth'
-import { signupFn } from '~/routes/signup'
+import { useRouter } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation } from "../hooks/useMutation";
+import { loginFn } from "../routes/_authed";
+import { Auth } from "./Auth";
+import { signupFn } from "~/routes/signup";
 
 export function Login() {
-  const router = useRouter()
+  const router = useRouter();
 
   const loginMutation = useMutation({
     fn: loginFn,
     onSuccess: async (ctx) => {
       if (!ctx.data?.error) {
-        await router.invalidate()
-        router.navigate({ to: '/' })
-        return
+        await router.invalidate();
+        router.navigate({ to: "/" });
+        return;
       }
     },
-  })
+  });
 
   const signupMutation = useMutation({
     fn: useServerFn(signupFn),
-  })
+  });
 
   return (
     <Auth
       actionText="Login"
       status={loginMutation.status}
       onSubmit={(e) => {
-        const formData = new FormData(e.target as HTMLFormElement)
+        const formData = new FormData(e.target as HTMLFormElement);
 
         loginMutation.mutate({
           data: {
-            email: formData.get('email') as string,
-            password: formData.get('password') as string,
+            email: formData.get("email") as string,
+            password: formData.get("password") as string,
           },
-        })
+        });
       }}
       afterSubmit={
         loginMutation.data ? (
@@ -47,15 +47,15 @@ export function Login() {
                   className="text-blue-500"
                   onClick={(e) => {
                     const formData = new FormData(
-                      (e.target as HTMLButtonElement).form!,
-                    )
+                      (e.target as HTMLButtonElement).form as HTMLFormElement,
+                    );
 
                     signupMutation.mutate({
                       data: {
-                        email: formData.get('email') as string,
-                        password: formData.get('password') as string,
+                        email: formData.get("email") as string,
+                        password: formData.get("password") as string,
                       },
-                    })
+                    });
                   }}
                   type="button"
                 >
@@ -67,5 +67,5 @@ export function Login() {
         ) : null
       }
     />
-  )
+  );
 }

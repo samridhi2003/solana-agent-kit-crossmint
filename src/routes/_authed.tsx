@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { hashPassword, prismaClient } from "~/utils/prisma";
+import { getUser, validateUser } from "db/queries";
 import { Login } from "~/components/Login";
 import { useAppSession } from "~/utils/session";
 
@@ -8,11 +8,7 @@ export const loginFn = createServerFn({ method: "POST" })
   .validator((d: { email: string; password: string }) => d)
   .handler(async ({ data }) => {
     // Find the user
-    const user = await prismaClient.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
+    const user = await getUser(data.email);
 
     // Check if the user exists
     if (!user) {
@@ -24,9 +20,9 @@ export const loginFn = createServerFn({ method: "POST" })
     }
 
     // Check if the password is correct
-    const hashedPassword = await hashPassword(data.password);
-
-    if (user.password !== hashedPassword) {
+    try {
+      await validateUser(data.email, data.password);
+    } catch (error) {
       return {
         error: true,
         message: "Incorrect password",
@@ -38,7 +34,9 @@ export const loginFn = createServerFn({ method: "POST" })
 
     // Store the user's email in the session
     await session.update({
-      userEmail: user.email,
+      email: user[0].email,
+      id: user[0].id,
+      walletId: user[0].walletId,
     });
   });
 

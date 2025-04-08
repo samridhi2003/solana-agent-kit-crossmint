@@ -5,6 +5,7 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import { Toaster } from "sonner";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import type * as React from "react";
@@ -19,12 +20,12 @@ const fetchUser = createServerFn({ method: "GET" }).handler(async () => {
   // We need to auth on the server so we have access to secure cookies
   const session = await useAppSession();
 
-  if (!session.data.userEmail) {
+  if (!session.data.email) {
     return null;
   }
 
   return {
-    email: session.data.userEmail,
+    email: session.data.email,
   };
 });
 
@@ -98,41 +99,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const { user } = Route.useRouteContext();
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
       <body>
-        <div className="p-2 flex gap-2 text-lg">
-          <Link
-            to="/"
-            activeProps={{
-              className: "font-bold",
-            }}
-            activeOptions={{ exact: true }}
-          >
-            Home
-          </Link>{" "}
-          <Link
-            to="/posts"
-            activeProps={{
-              className: "font-bold",
-            }}
-          >
-            Chats
-          </Link>
-          <div className="ml-auto">
-            {user ? (
-              <>
-                <span className="mr-2">{user.email}</span>
-                <Link to="/logout">Logout</Link>
-              </>
-            ) : (
-              <Link to="/login">Login</Link>
-            )}
-          </div>
-        </div>
-        <hr />
         <PrivyProvider
           appId={import.meta.env.VITE_PRIVY_APP_ID}
           clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
@@ -152,6 +123,37 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
           }}
         >
+          <div className="p-2 flex gap-2 text-lg">
+            <Link
+              to="/"
+              activeProps={{
+                className: "font-bold",
+              }}
+              activeOptions={{ exact: true }}
+            >
+              Home
+            </Link>{" "}
+            <Link
+              to="/chats"
+              activeProps={{
+                className: "font-bold",
+              }}
+            >
+              Chats
+            </Link>
+            <div className="ml-auto">
+              {user ? (
+                <>
+                  <span className="mr-2">{user.email}</span>
+                  <Link to="/logout">Logout</Link>
+                </>
+              ) : (
+                <Link to="/login">Login</Link>
+              )}
+            </div>
+          </div>
+          <hr />
+          <Toaster position="top-center" />
           {children}
         </PrivyProvider>
         <TanStackRouterDevtools position="bottom-right" />

@@ -1,30 +1,34 @@
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+
 export function Auth({
   actionText,
   onSubmit,
   status,
   afterSubmit,
 }: {
-  actionText: string
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  status: 'pending' | 'idle' | 'success' | 'error'
-  afterSubmit?: React.ReactNode
+  actionText: string;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  status: "pending" | "idle" | "success" | "error";
+  afterSubmit?: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 bg-white dark:bg-black flex items-start justify-center p-8">
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg">
+    <div className="fixed inset-0 bg-white dark:bg-black flex items-center justify-center p-8">
+      <div className="bg-white dark:bg-gray-800 w-80 p-8 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-4">{actionText}</h1>
         <form
           onSubmit={(e) => {
-            e.preventDefault()
-            onSubmit(e)
+            e.preventDefault();
+            onSubmit(e);
           }}
           className="space-y-4"
         >
           <div>
-            <label htmlFor="email" className="block text-xs">
+            <Label htmlFor="email" className="block text-xs">
               Email
-            </label>
-            <input
+            </Label>
+            <Input
               type="email"
               name="email"
               id="email"
@@ -32,26 +36,26 @@ export function Auth({
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-xs">
+            <Label htmlFor="password" className="block text-xs">
               Password
-            </label>
-            <input
+            </Label>
+            <Input
               type="password"
               name="password"
               id="password"
               className="px-2 py-1 w-full rounded border border-gray-500/20 bg-white dark:bg-gray-800"
             />
           </div>
-          <button
+          <Button
             type="submit"
-            className="w-full bg-cyan-600 text-white rounded py-2 font-black uppercase"
-            disabled={status === 'pending'}
+            className="w-full py-2"
+            disabled={status === "pending"}
           >
-            {status === 'pending' ? '...' : actionText}
-          </button>
+            {status === "pending" ? "..." : actionText}
+          </Button>
           {afterSubmit ? afterSubmit : null}
         </form>
       </div>
     </div>
-  )
+  );
 }
