@@ -1,72 +1,98 @@
-# Welcome to TanStack.com!
+# Privy Solana Agent
 
-This site is built with TanStack Router!
+A modern web application built with TanStack Router, React, and Solana integration, featuring authentication via Privy and AI capabilities.
 
-- [TanStack Router Docs](https://tanstack.com/router)
+## 🚀 Features
 
-It's deployed automagically with Netlify!
+- **Authentication**: Secure user authentication powered by Privy
+- **Solana Integration**: Built with Solana Agent Kit for blockchain interactions
+- **AI Capabilities**: OpenAI integration for intelligent features
+- **Modern UI**: Built with Radix UI components and Tailwind CSS
+- **Type Safety**: Full TypeScript support
+- **Database**: PostgreSQL with Drizzle ORM
+- **Routing**: TanStack Router for type-safe routing
+- **Development Tools**: Biome for linting and formatting
 
-- [Netlify](https://netlify.com/)
+## 🛠️ Tech Stack
 
-## Development
+- **Frontend**: React 19, TanStack Router
+- **Authentication**: Privy
+- **Blockchain**: Solana Web3.js, Solana Agent Kit
+- **Styling**: Tailwind CSS, Radix UI
+- **Database**: PostgreSQL, Drizzle ORM
+- **AI**: OpenAI SDK
+- **Development**: TypeScript, Biome, Vinxi
 
-From your terminal:
+## 📦 Installation
 
-```sh
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/privy-solana-agent.git
+cd privy-solana-agent
+```
+
+2. Install dependencies:
+```bash
 pnpm install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with the necessary environment variables.
+
+4. Run database migrations:
+```bash
+pnpm db:generate
+pnpm db:migrate
+```
+
+## 🚀 Development
+
+Start the development server:
+```bash
 pnpm dev
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
+The application will be available at `http://localhost:3000`.
 
-## Editing and previewing the docs of TanStack projects locally
+## 🧹 Linting and Formatting
 
-The documentations for all TanStack projects except for `React Charts` are hosted on [https://tanstack.com](https://tanstack.com), powered by this TanStack Router app.
-In production, the markdown doc pages are fetched from the GitHub repos of the projects, but in development they are read from the local file system.
-
-Follow these steps if you want to edit the doc pages of a project (in these steps we'll assume it's [`TanStack/form`](https://github.com/tanstack/form)) and preview them locally :
-
-1. Create a new directory called `tanstack`.
-
-```sh
-mkdir tanstack
+Run linting:
+```bash
+pnpm lint
 ```
 
-2. Enter the directory and clone this repo and the repo of the project there.
-
-```sh
-cd tanstack
-git clone git@github.com:TanStack/tanstack.com.git
-git clone git@github.com:TanStack/form.git
+Fix linting issues:
+```bash
+pnpm lint:fix
 ```
 
-> [!NOTE]
-> Your `tanstack` directory should look like this:
->
-> ```
-> tanstack/
->    |
->    +-- form/
->    |
->    +-- tanstack.com/
-> ```
+## 📦 Database Management
 
-> [!WARNING]
-> Make sure the name of the directory in your local file system matches the name of the project's repo. For example, `tanstack/form` must be cloned into `form` (this is the default) instead of `some-other-name`, because that way, the doc pages won't be found.
+- Generate migrations: `pnpm db:generate`
+- Run migrations: `pnpm db:migrate`
+- Open database studio: `pnpm db:studio`
+- Push schema changes: `pnpm db:push`
+- Pull schema changes: `pnpm db:pull`
+- Check schema: `pnpm db:check`
+- Update schema: `pnpm db:up`
 
-3. Enter the `tanstack/tanstack.com` directory, install the dependencies and run the app in dev mode:
+## 🏗️ Project Structure
 
-```sh
-cd tanstack.com
-pnpm i
-# The app will run on https://localhost:3000 by default
-pnpm dev
+```
+src/
+├── components/     # React components
+├── functions/     # Server-side functions
+├── hooks/         # Custom React hooks
+├── lib/           # Library code and utilities
+├── routes/        # Application routes
+├── styles/        # Global styles
+└── utils/         # Utility functions
 ```
 
-4. Now you can visit http://localhost:3000/form/latest/docs/overview in the browser and see the changes you make in `tanstack/form/docs`.
+## 📝 License
 
-> [!NOTE]
-> The updated pages need to be manually reloaded in the browser.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-> [!WARNING]
-> You will need to update the `docs/config.json` file (in the project's repo) if you add a new doc page!
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

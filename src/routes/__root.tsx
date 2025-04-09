@@ -41,9 +41,9 @@ export const Route = createRootRoute({
       },
       ...seo({
         title:
-          "TanStack Start | Type-Safe, Client-First, Full-Stack React Framework",
+          "Privy Solana Agent",
         description:
-          "TanStack Start is a type-safe, client-first, full-stack React framework. ",
+          "Privy Solana Agent is a web app that enables you to interact with the Solana blockchain through simple language. Swap, transfer, and stake with ease.",
       }),
     ],
     links: [
