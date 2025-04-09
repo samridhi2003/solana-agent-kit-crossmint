@@ -55,7 +55,7 @@ function PostsComponent() {
           <SidebarMenu>
             {dateGroupedChats.map((group) => {
               return (
-                <SidebarGroup>
+                <SidebarGroup key={group[0]}>
                   <SidebarGroupLabel>
                     {formatDistance(new Date(group[0]), new Date(), {
                       addSuffix: true,
@@ -83,7 +83,7 @@ function PostsComponent() {
                           </SidebarMenuButton>
                           <Button
                             variant={"ghost"}
-                            onClick={async () => {
+                            onClick={() => {
                               toast.promise(
                                 fetch(`/api/chat?id=${chat.id}`, {
                                   method: "DELETE",

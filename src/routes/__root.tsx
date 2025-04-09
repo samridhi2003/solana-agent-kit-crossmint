@@ -7,27 +7,14 @@ import {
 } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { createServerFn } from "@tanstack/react-start";
 import type * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary.js";
 import { NotFound } from "~/components/NotFound.js";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo.js";
-import { useAppSession } from "~/utils/session.js";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 import UserLoginButton from "~/components/UserLoginButton";
-
-const fetchUser = createServerFn({ method: "GET" }).handler(async () => {
-  // We need to auth on the server so we have access to secure cookies
-  const session = await useAppSession();
-
-  if (!session.data.email) {
-    return null;
-  }
-
-  return session.data;
-});
 
 export const Route = createRootRoute({
   head: () => ({
@@ -40,8 +27,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       ...seo({
-        title:
-          "Privy Solana Agent",
+        title: "Privy Solana Agent",
         description:
           "Privy Solana Agent is a web app that enables you to interact with the Solana blockchain through simple language. Swap, transfer, and stake with ease.",
       }),
@@ -69,13 +55,6 @@ export const Route = createRootRoute({
       { rel: "icon", href: "/favicon.ico" },
     ],
   }),
-  beforeLoad: async () => {
-    const user = await fetchUser();
-
-    return {
-      user,
-    };
-  },
   errorComponent: (props) => {
     return (
       <RootDocument>
@@ -96,8 +75,6 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { user } = Route.useRouteContext();
-
   return (
     <html lang="en" className="dark">
       <head>
@@ -122,7 +99,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
             // Create embedded wallets for users who don't have a wallet
             embeddedWallets: {
-              createOnLogin: "users-without-wallets",
+              ethereum: { createOnLogin: "off" },
+              solana: { createOnLogin: "users-without-wallets" },
             },
           }}
         >
@@ -145,7 +123,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               Chats
             </Link>
             <div className="ml-auto">
-              <UserLoginButton user={user} />
+              <UserLoginButton />
             </div>
           </div>
           <hr />

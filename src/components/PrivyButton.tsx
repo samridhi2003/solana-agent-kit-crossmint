@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { useCopyToClipboard } from "usehooks-ts";
 import { toast } from "./Toast";
 
-export default function PrivyButton(props: { asChild?: boolean }) {
+export default function PrivyButton() {
   const { ready, login, authenticated, user } = usePrivy();
   const [_, copyToClipboard] = useCopyToClipboard();
 

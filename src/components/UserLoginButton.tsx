@@ -1,29 +1,57 @@
-import { CircleUser, } from "lucide-react";
+import { CircleUser } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import type { User } from "db/schema";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, } from "@privy-io/react-auth";
 import { useCopyToClipboard } from "usehooks-ts";
 import { toast } from "./Toast";
+import { toast as sonnerToast } from "sonner";
+import PrivyButton from "./PrivyButton";
+import { fetchSession, logoutFn, signupFn } from "~/functions/session";
+import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
-export default function UserLoginButton(props: { user: User | null }) {
-  const { logout, authenticated, user, login } = usePrivy();
-  const [_, copyToClipboard] = useCopyToClipboard();
+export default function UserLoginButton() {
+  const { logout, authenticated, user, ready } = usePrivy();
   const nav = useNavigate();
+  const [_, copyToClipboard] = useCopyToClipboard();
+
+  useEffect(() => {
+    // Note: Sign up or log in the user once authenticated state changes to true. This is a patch until Privy provides login callbacks
+    if (ready && authenticated) {
+      fetchSession().then((v) => {
+        if (v?.email || v?.walletAddress) {
+          return;
+        }
+
+        signupFn({
+          data: {
+            walletAddress: user?.wallet?.address as string,
+            email: user?.email?.address,
+            redirectUrl: "/chats",
+          },
+        }).then((v) => {
+          if (v.error) {
+            return toast({
+              type: "error",
+              description: v.message,
+            });
+          }
+
+          nav({ href: "/chats" });
+        });
+      });
+    }
+  }, [authenticated, ready, user]);
 
   return (
     <>
-      {props.user ? (
+      {authenticated ? (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <CircleUser />
@@ -31,44 +59,47 @@ export default function UserLoginButton(props: { user: User | null }) {
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled>{props.user.email}</DropdownMenuItem>
-            {authenticated ? (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Privy Account</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      if (user?.wallet?.address) {
-                        copyToClipboard(user?.wallet?.address);
-                        toast({
-                          type: "success",
-                          description: `Copied ${user?.wallet?.address} to clipboard`,
-                        });
-                      } else
-                        toast({
-                          type: "error",
-                          description: "No wallet address found",
-                        });
-                    }}
-                  >
-                    Copy Address
-                  </DropdownMenuItem>
+            <DropdownMenuItem disabled>
+              {user?.email?.address ?? user?.wallet?.address}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                if (user?.wallet?.address) {
+                  copyToClipboard(user?.wallet?.address);
+                  toast({
+                    type: "success",
+                    description: `Copied ${user?.wallet?.address} to clipboard`,
+                  });
+                } else
+                  toast({
+                    type: "error",
+                    description: "No wallet address found",
+                  });
+              }}
+            >
+              Copy Address
+            </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={logout}>
-                    Disconnect Privy
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            ) : (
-              <DropdownMenuItem onClick={login}>Connect Privy</DropdownMenuItem>
-            )}
-            <DropdownMenuItem onClick={() => nav({ href: "/logout" })}>
-              Logout
+            <DropdownMenuItem
+              onClick={() =>
+                sonnerToast.promise(
+                  async () => {
+                    await logout();
+                    await logoutFn();
+                    nav({ href: "/", replace: true });
+                  },
+                  {
+                    description: "Disconnecting Privy...",
+                  },
+                )
+              }
+            >
+              Disconnect Privy
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Link to="/login">Login</Link>
+        <PrivyButton />
       )}
     </>
   );

@@ -11,9 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SignupImport } from './routes/signup'
-import { Route as LogoutImport } from './routes/logout'
-import { Route as LoginImport } from './routes/login'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthedChatsRouteImport } from './routes/_authed/chats.route'
@@ -21,24 +18,6 @@ import { Route as AuthedChatsIndexImport } from './routes/_authed/chats.index'
 import { Route as AuthedChatsChatIdImport } from './routes/_authed/chats.$chatId'
 
 // Create/Update Routes
-
-const SignupRoute = SignupImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LogoutRoute = LogoutImport.update({
-  id: '/logout',
-  path: '/logout',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AuthedRoute = AuthedImport.update({
   id: '/_authed',
@@ -85,27 +64,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthedImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/logout': {
-      id: '/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof LogoutImport
-      parentRoute: typeof rootRoute
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
     '/_authed/chats': {
@@ -161,9 +119,6 @@ const AuthedRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/logout': typeof LogoutRoute
-  '/signup': typeof SignupRoute
   '/chats': typeof AuthedChatsRouteRouteWithChildren
   '/chats/$chatId': typeof AuthedChatsChatIdRoute
   '/chats/': typeof AuthedChatsIndexRoute
@@ -172,9 +127,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/logout': typeof LogoutRoute
-  '/signup': typeof SignupRoute
   '/chats/$chatId': typeof AuthedChatsChatIdRoute
   '/chats': typeof AuthedChatsIndexRoute
 }
@@ -183,9 +135,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_authed': typeof AuthedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/logout': typeof LogoutRoute
-  '/signup': typeof SignupRoute
   '/_authed/chats': typeof AuthedChatsRouteRouteWithChildren
   '/_authed/chats/$chatId': typeof AuthedChatsChatIdRoute
   '/_authed/chats/': typeof AuthedChatsIndexRoute
@@ -193,24 +142,13 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | ''
-    | '/login'
-    | '/logout'
-    | '/signup'
-    | '/chats'
-    | '/chats/$chatId'
-    | '/chats/'
+  fullPaths: '/' | '' | '/chats' | '/chats/$chatId' | '/chats/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/logout' | '/signup' | '/chats/$chatId' | '/chats'
+  to: '/' | '' | '/chats/$chatId' | '/chats'
   id:
     | '__root__'
     | '/'
     | '/_authed'
-    | '/login'
-    | '/logout'
-    | '/signup'
     | '/_authed/chats'
     | '/_authed/chats/$chatId'
     | '/_authed/chats/'
@@ -220,17 +158,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthedRoute: typeof AuthedRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  LogoutRoute: typeof LogoutRoute
-  SignupRoute: typeof SignupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthedRoute: AuthedRouteWithChildren,
-  LoginRoute: LoginRoute,
-  LogoutRoute: LogoutRoute,
-  SignupRoute: SignupRoute,
 }
 
 export const routeTree = rootRoute
@@ -244,10 +176,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_authed",
-        "/login",
-        "/logout",
-        "/signup"
+        "/_authed"
       ]
     },
     "/": {
@@ -258,15 +187,6 @@ export const routeTree = rootRoute
       "children": [
         "/_authed/chats"
       ]
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/logout": {
-      "filePath": "logout.tsx"
-    },
-    "/signup": {
-      "filePath": "signup.tsx"
     },
     "/_authed/chats": {
       "filePath": "_authed/chats.route.tsx",

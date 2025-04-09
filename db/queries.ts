@@ -1,4 +1,3 @@
-import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import {
   and,
   asc,
@@ -34,9 +33,32 @@ import {
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(email: string): Promise<Array<User>> {
+export async function getUser(
+  email?: string,
+  walletAddress?: string,
+): Promise<Array<User>> {
   try {
-    return await db.select().from(user).where(eq(user.email, email));
+    if (email) {
+      const [existingUser] = await db
+        .select()
+        .from(user)
+        .where(eq(user.email, email));
+
+      if (existingUser) {
+        return [existingUser];
+      }
+    }
+
+    if (walletAddress) {
+      const existingUser = await db
+        .select()
+        .from(user)
+        .where(eq(user.walletAddress, walletAddress));
+
+      return existingUser;
+    }
+
+    return [];
   } catch (error) {
     console.error("Failed to get user from database");
     throw error;
@@ -44,41 +66,13 @@ export async function getUser(email: string): Promise<Array<User>> {
 }
 
 export async function createUser(
-  email: string,
-  password: string,
-  walletId: string | null,
+  walletAddress: string,
+  email?: string,
 ): Promise<Array<User>> {
-  const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
-
   try {
-    return await db.insert(user).values({ email, password: hash, walletId });
+    return await db.insert(user).values({ email, walletAddress });
   } catch (error) {
     console.error("Failed to create user in database");
-    throw error;
-  }
-}
-
-export async function validateUser(email: string, password: string) {
-  try {
-    const [userRecord] = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, email));
-
-    if (!userRecord) {
-      throw new Error("User not found");
-    }
-
-    const isValid = compareSync(password, userRecord.password as string);
-
-    if (!isValid) {
-      throw new Error("Invalid password");
-    }
-
-    return userRecord;
-  } catch (error) {
-    console.error("Failed to validate user in database");
     throw error;
   }
 }
@@ -86,15 +80,33 @@ export async function validateUser(email: string, password: string) {
 export async function updateUser(
   id: string,
   email?: string,
-  walletId?: string,
+  walletAddress?: string,
 ) {
   try {
-    return await db
-      .update(user)
-      .set({ email, walletId })
-      .where(eq(user.id, id));
+    if (!email && !walletAddress) {
+      throw new Error("No fields to update");
+    }
+
+    if (email && walletAddress) {
+      return await db
+        .update(user)
+        .set({ email, walletAddress })
+        .where(eq(user.id, id));
+    }
+
+    if (email) {
+      return await db.update(user).set({ email }).where(eq(user.id, id));
+    }
+
+    console.log(walletAddress);
+    if (walletAddress) {
+      return await db
+        .update(user)
+        .set({ walletAddress })
+        .where(eq(user.id, id));
+    }
   } catch (error) {
-    console.error("Failed to update user in database");
+    console.error("Failed to update user in database: ", error.message);
     throw error;
   }
 }
