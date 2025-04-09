@@ -116,6 +116,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </Link>{" "}
             <Link
               to="/chats"
+              preload={false}
               activeProps={{
                 className: "font-bold",
               }}
