@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Markdown } from "~/components/Markdown";
-import { readMarkdownFile } from "~/functions/markdown";
+import { readHomeMarkdownFile } from "~/functions/markdown";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    return readMarkdownFile({ data: { filePath: "home.md" } });
+    return readHomeMarkdownFile();
   },
   component: Home,
 });

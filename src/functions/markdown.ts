@@ -1,16 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { readFileSync } from "node:fs";
-import path from "node:path";
 
-export const readMarkdownFile = createServerFn({ method: "GET" })
-  .validator((data: { filePath: string }) => data)
-  .handler(({ data }) => {
-    const resolvedPath = path.resolve(
-      process.cwd(),
-      "src",
-      "markdown",
-      data.filePath,
-    );
-    const fileContent = readFileSync(resolvedPath, { encoding: "utf-8" });
-    return fileContent;
-  });
+export const readHomeMarkdownFile = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const url =
+      "https://raw.githubusercontent.com/michaelessiet/privy-sak-tanstack/refs/heads/main/src/markdown/home.md";
+    const text = await (await fetch(url)).text();
+    return text;
+  },
+);
