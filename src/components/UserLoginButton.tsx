@@ -1,4 +1,4 @@
-import { CircleUser, Contact } from "lucide-react";
+import { CircleUser, } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

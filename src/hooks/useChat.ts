@@ -18,7 +18,6 @@ import { useSolanaWallets } from "@privy-io/react-auth";
 import { SolanaAgentKit, createVercelAITools } from "solana-agent-kit";
 import TokenPlugin from "@solana-agent-kit/plugin-token";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { useAppSession } from "~/utils/session";
 import { generateUUID } from "~/lib/utils";
 import { fetchChat, saveChatFn, saveMessagesFn } from "~/functions/chats";
 import { fetchSession } from "~/functions/session";

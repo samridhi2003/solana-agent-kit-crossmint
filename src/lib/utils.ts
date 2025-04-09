@@ -1,6 +1,6 @@
-import { Attachment, UIMessage } from "ai";
+import type { Attachment, UIMessage } from "ai";
 import { clsx, type ClassValue } from "clsx";
-import { DBMessage } from "db/schema";
+import type { DBMessage } from "db/schema";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
