@@ -37,11 +37,11 @@ const components: Partial<Components> = {
     );
   },
   a: ({ node, children, ...props }) => {
+    console.log(node);
     return (
-      // @ts-expect-error
       <Link
         className="text-blue-500 hover:underline"
-        target="_blank"
+        to={node?.properties.href as string}
         rel="noreferrer"
         {...props}
       >
