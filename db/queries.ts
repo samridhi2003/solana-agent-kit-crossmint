@@ -25,10 +25,6 @@ import {
   type Chat,
 } from "./schema";
 
-// Optionally, if not using email/pass login, you can
-// use the Drizzle adapter for Auth.js / NextAuth
-// https://authjs.dev/reference/adapter/drizzle
-
 // biome-ignore lint: Forbidden non-null assertion.
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
@@ -106,6 +102,7 @@ export async function updateUser(
         .where(eq(user.id, id));
     }
   } catch (error) {
+    // @ts-expect-error - error is an instance of Error
     console.error("Failed to update user in database: ", error.message);
     throw error;
   }
