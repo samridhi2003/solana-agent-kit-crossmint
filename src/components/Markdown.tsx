@@ -37,10 +37,14 @@ const components: Partial<Components> = {
     );
   },
   a: ({ node, children, ...props }) => {
-    console.log(node);
     return (
       <Link
         className="text-blue-500 hover:underline"
+        target={
+          node?.properties.href?.toString().includes("https:")
+            ? "_blank"
+            : "_self"
+        }
         to={node?.properties.href as string}
         rel="noreferrer"
         {...props}

@@ -13,7 +13,7 @@ function Home() {
   const markdown = Route.useLoaderData();
 
   return (
-    <div className="p-2">
+    <div className="p-4">
       <Markdown>{markdown}</Markdown>
     </div>
   );

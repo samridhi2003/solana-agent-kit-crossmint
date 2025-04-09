@@ -26,6 +26,7 @@ export default defineConfig({
     },
     // You might still need optimizeDeps for the browser build
     optimizeDeps: {
+      exclude: [".vinxi"],
       esbuildOptions: {
         // define: {
         //   global: "globalThis",
