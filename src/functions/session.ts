@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createUser, getUser, updateUser } from "db/queries";
-import { useAppSession } from "~/utils/session";
+import { useAppSession } from "../utils/session";
 
 export const loginFn = createServerFn({ method: "POST" })
   .validator((data: { email?: string; walletAddress?: string }) => {
@@ -101,6 +101,7 @@ export const signupFn = createServerFn({ method: "POST" })
 export const fetchSession = createServerFn({ method: "GET" }).handler(
   async () =>
     (await useAppSession()).data as {
+      id?: string;
       email?: string;
       walletAddress: string;
     } | null,

@@ -14,7 +14,7 @@ import {
 } from "ai";
 import { myProvider } from "~/lib/ai/providers";
 import type { UseChatHelpers } from "@ai-sdk/react";
-import { useSolanaWallets } from "@privy-io/react-auth";
+import { useWallet } from "@crossmint/client-sdk-react-ui";
 import { SolanaAgentKit, createVercelAITools } from "solana-agent-kit";
 import TokenPlugin from "@solana-agent-kit/plugin-token";
 import { Connection, PublicKey } from "@solana/web3.js";
@@ -70,24 +70,26 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
   const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState<string>("");
   const [status, setStatus] = useState<Status>("ready");
-  const { wallets, ready } = useSolanaWallets();
+  const { wallet, status: walletStatus } = useWallet();
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
 
   const solanaTools = useMemo(() => {
-    if (ready && wallets.length > 0) {
-      const wallet = wallets[0];
+    if (wallet) {
+      const walletAddress = (wallet as any).address || (wallet as any).publicKey?.toString();
+      if (!walletAddress) return;
+
       const agent = new SolanaAgentKit(
         {
-          publicKey: new PublicKey(wallet.address),
+          publicKey: new PublicKey(walletAddress),
           signTransaction: async (tx) => {
-            const signed = await wallet.signTransaction(tx);
+            const signed = await (wallet as any).signTransaction(tx);
             return signed;
           },
           signMessage: async (msg) => {
-            const signed = await wallet.signMessage(msg);
+            const signed = await (wallet as any).signMessage(msg);
             return signed;
           },
           sendTransaction: async (tx) => {
@@ -95,19 +97,19 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
               import.meta.env.VITE_RPC_URL as string,
               "confirmed",
             );
-            return await wallet.sendTransaction(tx, connection);
+            return await (wallet as any).sendTransaction(tx, connection);
           },
           signAllTransactions: async (txs) => {
-            const signed = await wallet.signAllTransactions(txs);
+            const signed = await (wallet as any).signAllTransactions(txs);
             return signed;
           },
           signAndSendTransaction: async (tx) => {
-            const signed = await wallet.signTransaction(tx);
+            const signed = await (wallet as any).signTransaction(tx);
             const connection = new Connection(
               import.meta.env.VITE_RPC_URL as string,
               "confirmed",
             );
-            const sig = await wallet.sendTransaction(signed, connection);
+            const sig = await (wallet as any).sendTransaction(signed, connection);
             return { signature: sig };
           },
         },
@@ -118,7 +120,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
       const tools = createVercelAITools(agent, agent.actions);
       return tools;
     }
-  }, [ready, wallets]);
+  }, [wallet]);
 
   const append = useCallback(
     (newMessage: Message) => {
@@ -142,7 +144,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
       setStatus("submitted");
       const session = await fetchSession();
 
-      if (!session.id) {
+      if (!session?.id) {
         setError("You must be logged in to send messages");
         return;
       }
@@ -196,7 +198,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
 
         // Generate response
         if (session.id) {
-          if (!ready) {
+          if (!wallet) {
             setError("Privy wallet not connected");
             return;
           }
@@ -321,7 +323,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
 
   const deleteChat = useCallback(async () => {
     const session = await fetchSession();
-    if (!session.id) {
+    if (!session?.id) {
       setError("You must be logged in to delete chats");
       return;
     }

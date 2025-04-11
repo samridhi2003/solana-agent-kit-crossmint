@@ -8,13 +8,12 @@ import {
 import { Toaster } from "sonner";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
-import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary.js";
-import { NotFound } from "~/components/NotFound.js";
-import appCss from "~/styles/app.css?url";
-import { seo } from "~/utils/seo.js";
-import { PrivyProvider } from "@privy-io/react-auth";
-import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
-import UserLoginButton from "~/components/UserLoginButton";
+import { DefaultCatchBoundary } from "../components/DefaultCatchBoundary.js";
+import { NotFound } from "../components/NotFound.js";
+import appCss from "../styles/app.css?url";
+import { seo } from "../utils/seo.js";
+import UserLoginButton from "../components/UserLoginButton";
+import { CrossmintProvider } from "../components/CrossmintProvider";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,9 +26,9 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       ...seo({
-        title: "Privy Solana Agent",
+        title: "Crossmint Wallet",
         description:
-          "Privy Solana Agent is a web app that enables you to interact with the Solana blockchain through simple language. Swap, transfer, and stake with ease.",
+          "Crossmint Wallet is a web app that enables you to interact with the blockchain through simple language.",
       }),
     ],
     links: [
@@ -81,29 +80,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <PrivyProvider
-          appId={import.meta.env.VITE_PRIVY_APP_ID}
-          clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
-          config={{
-            // Display email and wallet as login methods
-            loginMethods: ["email", "wallet"],
-            externalWallets: {
-              solana: { connectors: toSolanaWalletConnectors() },
-            },
-            appearance: {
-              theme: "dark",
-              accentColor: "#676FFF",
-              // logo: "https://your-logo-url",
-              walletChainType: "solana-only",
-              walletList: ["detected_solana_wallets"],
-            },
-            // Create embedded wallets for users who don't have a wallet
-            embeddedWallets: {
-              ethereum: { createOnLogin: "off" },
-              solana: { createOnLogin: "users-without-wallets" },
-            },
-          }}
-        >
+        <CrossmintProvider>
           <div className="p-2 flex gap-2 text-lg">
             <Link
               to="/"
@@ -130,7 +107,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <hr />
           <Toaster position="top-center" />
           {children}
-        </PrivyProvider>
+        </CrossmintProvider>
         <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>

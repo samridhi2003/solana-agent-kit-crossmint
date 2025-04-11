@@ -7,51 +7,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { usePrivy, } from "@privy-io/react-auth";
 import { useCopyToClipboard } from "usehooks-ts";
 import { toast } from "./Toast";
 import { toast as sonnerToast } from "sonner";
-import PrivyButton from "./PrivyButton";
-import { fetchSession, logoutFn, signupFn } from "~/functions/session";
-import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { Button } from "./ui/button";
+import { useAuth, useWallet } from "@crossmint/client-sdk-react-ui";
 
 export default function UserLoginButton() {
-  const { logout, authenticated, user, ready } = usePrivy();
+  const { login, logout, jwt } = useAuth();
+  const { wallet, status } = useWallet();
   const nav = useNavigate();
   const [_, copyToClipboard] = useCopyToClipboard();
 
-  useEffect(() => {
-    // Note: Sign up or log in the user once authenticated state changes to true. This is a patch until Privy provides login callbacks
-    if (ready && authenticated) {
-      fetchSession().then((v) => {
-        if (v?.email || v?.walletAddress) {
-          return;
-        }
+  const walletAddress = wallet ? (wallet as any).address || (wallet as any).publicKey?.toString() : null;
 
-        signupFn({
-          data: {
-            walletAddress: user?.wallet?.address as string,
-            email: user?.email?.address,
-            redirectUrl: "/chats",
-          },
-        }).then((v) => {
-          if (v.error) {
-            return toast({
-              type: "error",
-              description: v.message,
-            });
-          }
+  if (status === "loading-error") {
+    return <div className="text-rose-500">Error loading wallet</div>;
+  }
 
-          nav({ href: "/chats" });
-        });
-      });
-    }
-  }, [authenticated, ready, user]);
+  if (status === "in-progress") {
+    return <div className="text-amber-500">Loading...</div>;
+  }
 
   return (
     <>
-      {authenticated ? (
+      {jwt ? (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <CircleUser />
@@ -60,15 +41,15 @@ export default function UserLoginButton() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled>
-              {user?.email?.address ?? user?.wallet?.address}
+              {walletAddress}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                if (user?.wallet?.address) {
-                  copyToClipboard(user?.wallet?.address);
+                if (walletAddress) {
+                  copyToClipboard(walletAddress);
                   toast({
                     type: "success",
-                    description: `Copied ${user?.wallet?.address} to clipboard`,
+                    description: `Copied ${walletAddress} to clipboard`,
                   });
                 } else
                   toast({
@@ -85,21 +66,20 @@ export default function UserLoginButton() {
                 sonnerToast.promise(
                   async () => {
                     await logout();
-                    await logoutFn();
                     nav({ href: "/", replace: true });
                   },
                   {
-                    description: "Disconnecting Privy...",
+                    description: "Disconnecting wallet...",
                   },
                 )
               }
             >
-              Disconnect Privy
+              Disconnect
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <PrivyButton />
+        <Button onClick={login}>Connect Wallet</Button>
       )}
     </>
   );
