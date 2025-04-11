@@ -1,4 +1,10 @@
+<div align="center">
+
 # Crossmint Solana Agent
+
+![Crossmint Solana Agent Banner](./public/banner.png)
+
+</div>
 
 A modern web application built with TanStack Router, React, and Solana integration, featuring authentication via Crossmint and AI capabilities.
 
