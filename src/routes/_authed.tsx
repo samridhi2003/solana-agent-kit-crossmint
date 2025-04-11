@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authed")({
         to: "/",
         search: {
           errMsg:
-            "Privy not connected. Please connect to Privy before accessing chats",
+            "Crossmint not connected. Please connect to Crossmint before accessing chats",
         },
       });
     }

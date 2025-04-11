@@ -17,7 +17,7 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import { useWallet } from "@crossmint/client-sdk-react-ui";
 import { SolanaAgentKit, createVercelAITools } from "solana-agent-kit";
 import TokenPlugin from "@solana-agent-kit/plugin-token";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction, VersionedTransaction, TransactionMessage } from "@solana/web3.js";
 import { generateUUID } from "~/lib/utils";
 import { fetchChat, saveChatFn, saveMessagesFn } from "~/functions/chats";
 import { fetchSession } from "~/functions/session";
@@ -85,8 +85,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
         {
           publicKey: new PublicKey(walletAddress),
           signTransaction: async (tx) => {
-            const signed = await (wallet as any).signTransaction(tx);
-            return signed;
+            return tx;
           },
           signMessage: async (msg) => {
             const signed = await (wallet as any).signMessage(msg);
@@ -97,24 +96,48 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
               import.meta.env.VITE_RPC_URL as string,
               "confirmed",
             );
-            return await (wallet as any).sendTransaction(tx, connection);
+            const serializedTx = tx instanceof Transaction 
+              ? tx.serialize().toString('hex')
+              : Buffer.from(tx.serialize()).toString('hex');
+            
+            return await (wallet as any).sendTransaction({
+              ...tx,
+              to: import.meta.env.VITE_RPC_URL, // Using RPC URL as the 'to' address
+              value: "0", // Required by Crossmint but not used for Solana
+              data: serializedTx,
+            });
           },
           signAllTransactions: async (txs) => {
-            const signed = await (wallet as any).signAllTransactions(txs);
-            return signed;
+           
+            return txs;
           },
           signAndSendTransaction: async (tx) => {
-            const signed = await (wallet as any).signTransaction(tx);
             const connection = new Connection(
               import.meta.env.VITE_RPC_URL as string,
               "confirmed",
             );
-            const sig = await (wallet as any).sendTransaction(signed, connection);
-            return { signature: sig };
+            
+            if (tx instanceof Transaction) {
+              const message = tx.compileMessage();
+              const versionedTx = new VersionedTransaction(message);
+              const sig = await (wallet).sendTransaction({
+                transaction: versionedTx,
+                to: import.meta.env.VITE_RPC_URL
+              });
+              return { signature: sig };
+            } else {
+              const sig = await (wallet).sendTransaction({
+                transaction: tx,
+                to: import.meta.env.VITE_RPC_URL
+              });
+              return { signature: sig };
+            }
           },
         },
         import.meta.env.VITE_RPC_URL as string,
-        {},
+        {
+          signOnly : false
+        },
       ).use(TokenPlugin);
 
       const tools = createVercelAITools(agent, agent.actions);
@@ -199,7 +222,7 @@ export function useChat({ id, initialMessages = [] }: UseChatOptions) {
         // Generate response
         if (session.id) {
           if (!wallet) {
-            setError("Privy wallet not connected");
+            setError("Crossmint wallet not connected");
             return;
           }
 

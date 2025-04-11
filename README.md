@@ -1,10 +1,10 @@
-# Privy Solana Agent
+# Crossmint Solana Agent
 
-A modern web application built with TanStack Router, React, and Solana integration, featuring authentication via Privy and AI capabilities.
+A modern web application built with TanStack Router, React, and Solana integration, featuring authentication via Crossmint and AI capabilities.
 
 ## 🚀 Features
 
-- **Authentication**: Secure user authentication powered by Privy
+- **Authentication**: Secure wallet authentication powered by Crossmint
 - **Solana Integration**: Built with Solana Agent Kit for blockchain interactions
 - **AI Capabilities**: OpenAI integration for intelligent features
 - **Modern UI**: Built with Radix UI components and Tailwind CSS
@@ -16,7 +16,7 @@ A modern web application built with TanStack Router, React, and Solana integrati
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19, TanStack Router
-- **Authentication**: Privy
+- **Authentication**: Crossmint
 - **Blockchain**: Solana Web3.js, Solana Agent Kit
 - **Styling**: Tailwind CSS, Radix UI
 - **Database**: PostgreSQL, Drizzle ORM
@@ -27,8 +27,8 @@ A modern web application built with TanStack Router, React, and Solana integrati
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/privy-solana-agent.git
-cd privy-solana-agent
+git clone https://github.com/yourusername/crossmint-solana-agent.git
+cd crossmint-solana-agent
 ```
 
 2. Install dependencies:
@@ -37,7 +37,11 @@ pnpm install
 ```
 
 3. Set up environment variables:
-Create a `.env` file in the root directory with the necessary environment variables.
+Create a `.env` file in the root directory with the following variables:
+```
+VITE_CROSSMINT_SECRET=your_crossmint_secret
+VITE_RPC_URL=your_solana_rpc_url
+```
 
 4. Run database migrations:
 ```bash

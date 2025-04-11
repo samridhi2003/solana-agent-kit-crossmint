@@ -26,7 +26,7 @@ export const loginFn = createServerFn({ method: "POST" })
     }
 
     // This is to check if the user has a wallet and if not, update the user object
-    // (in case Privy fails to create a wallet for the user after email signup)
+    // (in case Crossmint fails to create a wallet for the user after email signup)
     if (!user[0].walletAddress || user[0].walletAddress.length === 0) {
       await updateUser(user[0].id, undefined, data.walletAddress);
     }
